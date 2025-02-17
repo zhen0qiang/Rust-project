@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fs;
+use std::{env, fs};
 
 pub fn run(config: Args) -> Result<(), Box<dyn Error>>{
     let contents = fs::read_to_string(config.file_path)?;
@@ -25,4 +25,21 @@ impl Args {
 
         Ok(Args { query, file_path })   
     }
+
+    pub fn build_from_iter(mut args: impl Iterator<Item=String>) -> Result<Args, &'static str> {
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Not enough arguments"),
+        };
+
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Not enough arguments"),
+        };
+
+        Ok(Args { query, file_path })
+    }
+
 }
